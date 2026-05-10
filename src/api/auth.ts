@@ -1,10 +1,15 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface AuthResponse {
-  accessToken: string;
+  isSuccess: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+  };
 }
 
 export interface RegisterResponse {
+  isSuccess: boolean;
   message: string;
 }
 

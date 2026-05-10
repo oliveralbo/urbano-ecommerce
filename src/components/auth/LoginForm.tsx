@@ -18,8 +18,8 @@ export const LoginForm: React.FC = () => {
 
     try {
       const response = await authApi.login({ email, password });
-      login(response.accessToken);
-    } catch (err: any) {
+      login(response.data.accessToken);
+    } catch (err:unknown) {
       setError(err.message);
     } finally {
       setIsLoading(false);
