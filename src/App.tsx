@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext.provider';
 import { AppRouter } from './routes/AppRouter';
 
 const App: React.FC = () => {
