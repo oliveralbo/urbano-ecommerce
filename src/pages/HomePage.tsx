@@ -16,7 +16,11 @@ export const HomePage: React.FC = () => {
               <User size={20} />
               <span className="text-sm font-medium">Mi Cuenta</span>
             </div>
-            <Button variant="outline" className="flex items-center gap-2" onClick={logout}>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={logout}
+            >
               <LogOut size={18} />
               <span>Salir</span>
             </Button>
@@ -33,21 +37,34 @@ export const HomePage: React.FC = () => {
             ¡Bienvenido de nuevo!
           </h2>
           <p className="text-lg text-gray-600 mb-8">
-            Has iniciado sesión correctamente. Este es tu panel de control principal. 
-            Aquí podrás gestionar tus pedidos, ver tus productos favoritos y actualizar tu perfil.
+            Has iniciado sesión correctamente. Este es tu panel de control
+            principal. Aquí podrás gestionar tus pedidos, ver tus productos
+            favoritos y actualizar tu perfil.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 border rounded-xl hover:border-blue-500 transition-colors cursor-pointer group">
-              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">Mis Pedidos</h3>
-              <p className="text-sm text-gray-500 mt-1">Rastrea tus compras recientes.</p>
+              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">
+                Mis Pedidos
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Rastrea tus compras recientes.
+              </p>
             </div>
             <div className="p-6 border rounded-xl hover:border-blue-500 transition-colors cursor-pointer group">
-              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">Favoritos</h3>
-              <p className="text-sm text-gray-500 mt-1">Productos que te encantaron.</p>
+              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">
+                Favoritos
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Productos que te encantaron.
+              </p>
             </div>
             <div className="p-6 border rounded-xl hover:border-blue-500 transition-colors cursor-pointer group">
-              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">Configuración</h3>
-              <p className="text-sm text-gray-500 mt-1">Ajustes de tu cuenta.</p>
+              <h3 className="font-bold text-gray-900 group-hover:text-blue-600">
+                Configuración
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Ajustes de tu cuenta.
+              </p>
             </div>
           </div>
         </div>

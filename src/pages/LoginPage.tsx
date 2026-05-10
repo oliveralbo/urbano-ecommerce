@@ -16,7 +16,10 @@ export const LoginPage: React.FC = () => {
         <LoginForm />
         <p className="mt-6 text-center text-sm text-gray-600">
           ¿No tienes cuenta?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline font-medium">
+          <Link
+            to="/register"
+            className="text-blue-600 hover:underline font-medium"
+          >
             Regístrate aquí
           </Link>
         </p>

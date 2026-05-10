@@ -1,9 +1,13 @@
-import React, {  useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { AuthContext } from './AuthContext';
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem('token'),
+  );
 
   useEffect(() => {
     if (token) {

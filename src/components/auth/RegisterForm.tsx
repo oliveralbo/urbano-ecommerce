@@ -21,8 +21,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     try {
       await authApi.register({ email, password });
       onSuccess();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : 'Ocurrió un error inesperado',
+      );
     } finally {
       setIsLoading(false);
     }
@@ -30,7 +32,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
-      <h2 className="text-2xl font-bold text-center text-gray-800">Crear Cuenta</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-800">
+        Crear Cuenta
+      </h2>
       <Input
         label="Email"
         type="email"

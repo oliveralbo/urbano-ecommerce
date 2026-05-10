@@ -19,7 +19,7 @@ export const LoginForm: React.FC = () => {
     try {
       const response = await authApi.login({ email, password });
       login(response.data.accessToken);
-    } catch (err:unknown) {
+    } catch (err: unknown) {
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -28,7 +28,9 @@ export const LoginForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
-      <h2 className="text-2xl font-bold text-center text-gray-800">Iniciar Sesión</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-800">
+        Iniciar Sesión
+      </h2>
       <Input
         label="Email"
         type="email"

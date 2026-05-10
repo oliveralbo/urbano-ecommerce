@@ -12,7 +12,9 @@ export const RegisterPage: React.FC = () => {
   }
 
   const handleSuccess = () => {
-    navigate('/login', { state: { message: 'Cuenta creada con éxito. Ya puedes iniciar sesión.' } });
+    navigate('/login', {
+      state: { message: 'Cuenta creada con éxito. Ya puedes iniciar sesión.' },
+    });
   };
 
   return (
@@ -21,7 +23,10 @@ export const RegisterPage: React.FC = () => {
         <RegisterForm onSuccess={handleSuccess} />
         <p className="mt-6 text-center text-sm text-gray-600">
           ¿Ya tienes cuenta?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline font-medium">
+          <Link
+            to="/login"
+            className="text-blue-600 hover:underline font-medium"
+          >
             Inicia sesión
           </Link>
         </p>
