@@ -21,7 +21,6 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      'no-unused-vars': 'off', // Desactivado para usar la versión de TS
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_' },

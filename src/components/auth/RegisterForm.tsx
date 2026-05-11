@@ -8,15 +8,22 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       await authApi.register({ email, password });
@@ -49,6 +56,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         placeholder="••••••••"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <Input
+        label="Confirmar Contraseña"
+        type="password"
+        placeholder="••••••••"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         required
       />
       {error && <p className="text-sm text-red-500 text-center">{error}</p>}

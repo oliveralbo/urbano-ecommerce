@@ -20,7 +20,9 @@ export const LoginForm: React.FC = () => {
       const response = await authApi.login({ email, password });
       login(response.data.accessToken);
     } catch (err: unknown) {
-      setError(err.message);
+      setError(
+        err instanceof Error ? err.message : 'Ocurrió un error inesperado',
+      );
     } finally {
       setIsLoading(false);
     }
