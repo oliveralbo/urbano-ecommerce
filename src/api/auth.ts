@@ -1,11 +1,27 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export interface AuthResponse {
+export interface Role {
+  id: number;
+  name: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  roles: Role[];
+}
+
+export interface ApiResponse<T> {
   isSuccess: boolean;
   message: string;
-  data: {
-    accessToken: string;
-  };
+  data: T;
+  errorCode: string | null;
+  errors: string[];
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  user: User;
 }
 
 export interface RegisterResponse {
@@ -26,12 +42,13 @@ export const authApi = {
       body: JSON.stringify(credentials),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error en el inicio de sesión');
+    const result: ApiResponse<AuthResponse> = await response.json();
+
+    if (!response.ok || !result.isSuccess) {
+      throw new Error(result.message || 'Error en el inicio de sesión');
     }
 
-    return response.json();
+    return result.data;
   },
 
   register: async (credentials: AuthCredentials): Promise<RegisterResponse> => {
@@ -41,11 +58,14 @@ export const authApi = {
       body: JSON.stringify(credentials),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error en el registro');
+    const result: ApiResponse<RegisterResponse> = await response.json();
+
+    if (!response.ok || !result.isSuccess) {
+      throw new Error(result.message || 'Error en el registro');
     }
 
-    return response.json();
+    return (
+      result.data || { isSuccess: result.isSuccess, message: result.message }
+    );
   },
 };

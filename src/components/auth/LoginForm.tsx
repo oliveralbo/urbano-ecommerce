@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
@@ -10,6 +11,7 @@ export const LoginForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +20,13 @@ export const LoginForm: React.FC = () => {
 
     try {
       const response = await authApi.login({ email, password });
-      login(response.data.accessToken);
+
+      if (!response.accessToken) {
+        throw new Error('No se recibió el token de acceso');
+      }
+
+      login(response.accessToken, response.user);
+      navigate('/', { replace: true });
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : 'Ocurrió un error inesperado',
