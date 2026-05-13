@@ -33,6 +33,11 @@ export interface ProductBase {
   variationType: VariationType;
 }
 
+export interface ProductForm extends ProductBase {
+  categoryId: string;
+  about: string;
+}
+
 export interface ComputerDetails {
   category: 'Computers';
   brand: string;
