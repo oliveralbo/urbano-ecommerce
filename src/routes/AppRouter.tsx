@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
+import { AdminPage } from '../pages/AdminPage';
+import { SalesPage } from '../pages/SalesPage';
 import { PrivateRoute } from './PrivateRoute';
 
 export const AppRouter: React.FC = () => {
@@ -13,6 +15,22 @@ export const AppRouter: React.FC = () => {
         element={
           <PrivateRoute>
             <HomePage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <PrivateRoute allowedRoles={['Admin']}>
+            <AdminPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/ventas"
+        element={
+          <PrivateRoute allowedRoles={['Merchant', 'Admin']}>
+            <SalesPage />
           </PrivateRoute>
         }
       />

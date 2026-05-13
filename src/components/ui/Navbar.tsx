@@ -1,5 +1,6 @@
 import { LogOut, Menu, Search, ShoppingCart, User } from 'lucide-react';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from './Button';
 
@@ -14,14 +15,17 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <div className="shrink-0 flex items-center gap-2 cursor-pointer">
+          <Link
+            to="/"
+            className="shrink-0 flex items-center gap-2 cursor-pointer"
+          >
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
               U
             </div>
             <span className="text-xl font-bold text-gray-900 hidden md:block tracking-tight">
               Urbano
             </span>
-          </div>
+          </Link>
 
           {/* Search Bar */}
           <div className="flex-1 max-w-2xl hidden sm:block">
@@ -41,14 +45,20 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-4">
             <div className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-600 mr-2">
               {isAdmin && (
-                <a href="#" className="hover:text-blue-600 transition-colors">
+                <Link
+                  to="/admin"
+                  className="hover:text-blue-600 transition-colors"
+                >
                   Admin
-                </a>
+                </Link>
               )}
-              {isMerchant && (
-                <a href="#" className="hover:text-blue-600 transition-colors">
+              {(isMerchant || isAdmin) && (
+                <Link
+                  to="/ventas"
+                  className="hover:text-blue-600 transition-colors"
+                >
                   Ventas
-                </a>
+                </Link>
               )}
             </div>
 
