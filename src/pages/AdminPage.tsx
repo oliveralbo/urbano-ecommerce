@@ -1,35 +1,193 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import type { User } from '../api/auth';
+import { userApi } from '../api/user';
+import { Button } from '../components/ui/Button';
 import { Navbar } from '../components/ui/Navbar';
+import { useAuth } from '../hooks/useAuth';
+
+const ROLE_IDS = {
+  MERCHANT: 2,
+  ADMIN: 3,
+};
 
 export const AdminPage: React.FC = () => {
+  const { token } = useAuth();
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [processingId, setProcessingId] = useState<number | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const fetchUsers = useCallback(
+    async (showLoading = false) => {
+      if (!token) return;
+      try {
+        if (showLoading) setIsLoading(true);
+        const data = await userApi.getUsers(token);
+        setUsers(data);
+        setError(null);
+      } catch (err) {
+        setError('Error al cargar usuarios');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [token],
+  );
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleAssignRole = async (userId: number, roleId: number) => {
+    if (!token) return;
+    try {
+      setProcessingId(userId);
+      await userApi.assignRole(token, { userId, roleId });
+      setSuccessMessage(
+        'Rol asignado correctamente. Se ha enviado un correo al usuario.',
+      );
+      setTimeout(() => setSuccessMessage(null), 5000);
+      await fetchUsers(true);
+    } catch (err) {
+      alert('Error al asignar el rol');
+      console.error(err);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const hasRole = (user: User, roleName: string) => {
+    return user.roles.some((role) => role.name === roleName);
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Panel de Administración
-        </h1>
-        <div className="bg-white shadow rounded-lg p-6 border border-gray-200">
-          <p className="text-gray-600 mb-4">
-            Bienvenido al panel de administración. Aquí podrás gestionar
-            usuarios, productos y configuraciones globales.
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestión de Usuarios
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Administra los roles y permisos de los usuarios de la plataforma.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <h3 className="font-semibold text-blue-800">Usuarios</h3>
-              <p className="text-sm text-blue-600">Gestionar cuentas y roles</p>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-              <h3 className="font-semibold text-green-800">Catálogo</h3>
-              <p className="text-sm text-green-600">
-                Control de inventario maestro
-              </p>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
-              <h3 className="font-semibold text-purple-800">Reportes</h3>
-              <p className="text-sm text-purple-600">Estadísticas generales</p>
-            </div>
+        </header>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+            {error}
           </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex justify-between items-center">
+            <span>{successMessage}</span>
+            <button
+              onClick={() => setSuccessMessage(null)}
+              className="text-green-900 font-bold px-2"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        <div className="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+          {isLoading ? (
+            <div className="p-12 text-center text-gray-500">
+              Cargando usuarios...
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-bottom border-gray-200">
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">
+                      Usuario
+                    </th>
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">
+                      Roles Actuales
+                    </th>
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {users.map((u) => (
+                    <tr
+                      key={u.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {u.email}
+                        </div>
+                        <div className="text-xs text-gray-500">ID: {u.id}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          {u.roles.map((role) => (
+                            <span
+                              key={role.id}
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                role.name === 'Admin'
+                                  ? 'bg-purple-100 text-purple-700'
+                                  : role.name === 'Merchant'
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : 'bg-gray-100 text-gray-700'
+                              }`}
+                            >
+                              {role.name}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          {!hasRole(u, 'Merchant') && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() =>
+                                handleAssignRole(u.id, ROLE_IDS.MERCHANT)
+                              }
+                              disabled={processingId === u.id}
+                            >
+                              Hacer Vendedor
+                            </Button>
+                          )}
+                          {!hasRole(u, 'Admin') && (
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={() =>
+                                handleAssignRole(u.id, ROLE_IDS.ADMIN)
+                              }
+                              disabled={processingId === u.id}
+                            >
+                              Hacer Admin
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {users.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="px-6 py-12 text-center text-gray-500"
+                      >
+                        No se encontraron usuarios.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </main>
     </div>
