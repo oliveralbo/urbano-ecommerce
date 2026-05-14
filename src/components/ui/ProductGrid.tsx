@@ -1,95 +1,133 @@
-import React from 'react';
-import { ProductCard, type Product } from './ProductCard';
-
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: 'Smart TV 50" 4K UHD con Android TV y Google Assistant',
-    price: 450000,
-    image:
-      'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=800&q=80',
-    category: 'Tecnología',
-    rating: 4.8,
-    reviews: 124,
-  },
-  {
-    id: 2,
-    name: 'Smartphone Pro Max 256GB Cámara 108MP Batería 5000mAh',
-    price: 1200000,
-    image:
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80',
-    category: 'Celulares',
-    rating: 4.9,
-    reviews: 89,
-  },
-  {
-    id: 3,
-    name: 'Notebook Ultra Slim i7 16GB RAM 512GB SSD 14" FHD',
-    price: 890000,
-    image:
-      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80',
-    category: 'Computación',
-    rating: 4.7,
-    reviews: 56,
-  },
-  {
-    id: 4,
-    name: 'Auriculares Wireless Noise Cancelling Bluetooth 5.2',
-    price: 150000,
-    image:
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-    category: 'Audio',
-    rating: 4.5,
-    reviews: 210,
-  },
-  {
-    id: 5,
-    name: 'Cafetera Express Automática 15 Bares Molinillo Integrado',
-    price: 320000,
-    image:
-      'https://images.unsplash.com/photo-1520970014086-2208d157c9e2?auto=format&fit=crop&w=800&q=80',
-    category: 'Electrohogar',
-    rating: 4.6,
-    reviews: 45,
-  },
-  {
-    id: 6,
-    name: 'Reloj Inteligente Sport GPS Sumergible Ritmo Cardíaco',
-    price: 95000,
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
-    category: 'Tecnología',
-    rating: 4.4,
-    reviews: 167,
-  },
-  {
-    id: 7,
-    name: 'Zapatillas Running Ultralight Amortiguación Premium',
-    price: 110000,
-    image:
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-    category: 'Deportes',
-    rating: 4.8,
-    reviews: 312,
-  },
-  {
-    id: 8,
-    name: 'Cámara Mirrorless 24MP 4K Video Lente 18-55mm Incluido',
-    price: 750000,
-    image:
-      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80',
-    category: 'Fotografía',
-    rating: 4.9,
-    reviews: 34,
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { inventoryApi, type Product } from '../../api/inventory';
+import { useAuth } from '../../hooks/useAuth';
+import { ProductCard } from './ProductCard';
+import { ProductDetailsModal } from './ProductDetailsModal';
 
 export const ProductGrid: React.FC = () => {
+  const { token } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Modal state
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const data = await inventoryApi.getProducts(token);
+        setProducts(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError(
+          'No se pudieron cargar los productos. Por favor, intenta de nuevo más tarde.',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [token]);
+
+  const handleProductClick = (id: number) => {
+    setSelectedProductId(id);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProductId(null);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="bg-white rounded-2xl border-2 border-blue-50 h-[220px] animate-pulse p-6"
+          >
+            <div className="h-4 bg-gray-100 rounded w-1/4 mb-4" />
+            <div className="h-6 bg-gray-100 rounded w-3/4 mb-2" />
+            <div className="h-6 bg-gray-100 rounded w-1/2 mb-6" />
+            <div className="flex justify-between items-end mt-auto">
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-100 rounded w-12" />
+                <div className="h-6 bg-gray-100 rounded w-24" />
+              </div>
+              <div className="w-12 h-12 bg-gray-100 rounded-xl" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!token) {
+    return (
+      <div className="text-center py-12 bg-blue-50 rounded-2xl border border-blue-100">
+        <p className="text-blue-600 font-medium">
+          Inicia sesión para ver nuestros productos exclusivos.
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 bg-red-50 rounded-2xl border border-red-100">
+        <p className="text-red-600 font-medium">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 text-sm font-bold text-red-700 hover:underline"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+        <p className="text-gray-500 font-medium">
+          No hay productos disponibles en este momento.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {MOCK_PRODUCTS.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onClick={() => handleProductClick(product.id)}
+          />
+        ))}
+      </div>
+
+      {selectedProductId && (
+        <ProductDetailsModal
+          productId={selectedProductId}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
+    </>
   );
 };

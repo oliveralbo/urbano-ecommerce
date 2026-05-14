@@ -15,7 +15,7 @@ export default defineConfig([
       ...tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
-      prettierConfig, // Desactiva reglas que entren en conflicto con Prettier
+      prettierConfig,
     ],
     languageOptions: {
       globals: globals.browser,

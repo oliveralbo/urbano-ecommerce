@@ -5,17 +5,38 @@ const API_URL = import.meta.env.VITE_API_URL;
 export interface Category {
   id: number;
   name: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Merchant {
+  id: number;
+  email: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Product {
   id: number;
   title?: string;
+  name?: string; // Para compatibilidad con mocks anteriores
   code?: string;
   categoryId: number;
   description?: string;
   about?: string[];
   variationType?: string;
   isActive: boolean;
+  details?: Record<string, unknown>;
+  merchantId?: number;
+  merchant?: Merchant;
+  category?: Category;
+  createdAt?: string;
+  updatedAt?: string;
+  // Campos para la UI (Mocks/Fallbacks)
+  price?: number;
+  rating?: number;
+  reviews?: number;
+  image?: string;
 }
 
 export interface CreateProductDto {
@@ -124,6 +145,32 @@ export const inventoryApi = {
     const result: ApiResponse<Product> = await response.json();
     if (!response.ok || !result.isSuccess)
       throw new Error(result.message || 'Error al activar producto');
+    return result.data;
+  },
+
+  getProducts: async (token: string): Promise<Product[]> => {
+    const response = await fetch(`${API_URL}/product`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const result: ApiResponse<Product[]> = await response.json();
+    if (!response.ok || !result.isSuccess)
+      throw new Error(result.message || 'Error al cargar productos');
+    return result.data;
+  },
+
+  getProductById: async (token: string, id: number): Promise<Product> => {
+    const response = await fetch(`${API_URL}/product/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const result: ApiResponse<Product> = await response.json();
+    if (!response.ok || !result.isSuccess)
+      throw new Error(result.message || 'Error al cargar el producto');
     return result.data;
   },
 };
