@@ -2,7 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "usernamehw.errorlens",
     "bradlc.vscode-tailwindcss",
     "eamodio.gitlens"
   ]

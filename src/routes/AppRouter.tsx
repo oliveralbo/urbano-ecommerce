@@ -29,7 +29,7 @@ export const AppRouter: React.FC = () => {
       <Route
         path="/ventas"
         element={
-          <PrivateRoute allowedRoles={['Merchant', 'Admin']}>
+          <PrivateRoute allowedRoles={['Merchant']}>
             <SalesPage />
           </PrivateRoute>
         }

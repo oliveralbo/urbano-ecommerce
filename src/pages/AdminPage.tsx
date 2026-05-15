@@ -40,18 +40,27 @@ export const AdminPage: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  const handleAssignRole = async (userId: number, roleId: number) => {
+  const handleToggleRole = async (
+    userId: number,
+    roleId: number,
+    hasRole: boolean,
+  ) => {
     if (!token) return;
     try {
       setProcessingId(userId);
-      await userApi.assignRole(token, { userId, roleId });
-      setSuccessMessage(
-        'Rol asignado correctamente. Se ha enviado un correo al usuario.',
-      );
+      if (hasRole) {
+        await userApi.unassignRole(token, { userId, roleId });
+        setSuccessMessage('Rol removido correctamente.');
+      } else {
+        await userApi.assignRole(token, { userId, roleId });
+        setSuccessMessage(
+          'Rol asignado correctamente. Se ha enviado un correo al usuario.',
+        );
+      }
       setTimeout(() => setSuccessMessage(null), 5000);
       await fetchUsers(true);
     } catch (err) {
-      alert('Error al asignar el rol');
+      alert('Error al actualizar el rol');
       console.error(err);
     } finally {
       setProcessingId(null);
@@ -61,6 +70,8 @@ export const AdminPage: React.FC = () => {
   const hasRole = (user: User, roleName: string) => {
     return user.roles.some((role) => role.name === roleName);
   };
+
+  const { user: currentUser } = useAuth();
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
@@ -115,65 +126,95 @@ export const AdminPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {users.map((u) => (
-                    <tr
-                      key={u.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {u.email}
-                        </div>
-                        <div className="text-xs text-gray-500">ID: {u.id}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          {u.roles.map((role) => (
-                            <span
-                              key={role.id}
-                              className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                role.name === 'Admin'
-                                  ? 'bg-purple-100 text-purple-700'
-                                  : role.name === 'Merchant'
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'bg-gray-100 text-gray-700'
-                              }`}
-                            >
-                              {role.name}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          {!hasRole(u, 'Merchant') && (
+                  {users.map((u) => {
+                    const isMerchant = hasRole(u, 'Merchant');
+                    const isAdmin = hasRole(u, 'Admin');
+                    const isSelf = currentUser?.id === u.id;
+
+                    return (
+                      <tr
+                        key={u.id}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {u.email}
+                            {isSelf && (
+                              <span className="ml-2 text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
+                                Tú
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            ID: {u.id}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-2">
+                            {u.roles.map((role) => (
+                              <span
+                                key={role.id}
+                                className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                  role.name === 'Admin'
+                                    ? 'bg-purple-100 text-purple-700'
+                                    : role.name === 'Merchant'
+                                      ? 'bg-blue-100 text-blue-700'
+                                      : 'bg-gray-100 text-gray-700'
+                                }`}
+                              >
+                                {role.name}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-2">
                             <Button
-                              variant="secondary"
+                              variant={isMerchant ? 'primary' : 'outline'}
                               size="sm"
                               onClick={() =>
-                                handleAssignRole(u.id, ROLE_IDS.MERCHANT)
+                                handleToggleRole(
+                                  u.id,
+                                  ROLE_IDS.MERCHANT,
+                                  isMerchant,
+                                )
                               }
                               disabled={processingId === u.id}
+                              className={
+                                isMerchant
+                                  ? 'bg-blue-600 hover:bg-blue-700'
+                                  : ''
+                              }
                             >
-                              Hacer Vendedor
+                              {isMerchant ? 'Vendedor ✓' : 'Hacer Vendedor'}
                             </Button>
-                          )}
-                          {!hasRole(u, 'Admin') && (
                             <Button
-                              variant="primary"
+                              variant={isAdmin ? 'primary' : 'outline'}
                               size="sm"
                               onClick={() =>
-                                handleAssignRole(u.id, ROLE_IDS.ADMIN)
+                                handleToggleRole(u.id, ROLE_IDS.ADMIN, isAdmin)
                               }
-                              disabled={processingId === u.id}
+                              disabled={
+                                processingId === u.id || (isSelf && isAdmin)
+                              }
+                              className={
+                                isAdmin
+                                  ? 'bg-purple-600 hover:bg-purple-700 border-purple-600'
+                                  : ''
+                              }
+                              title={
+                                isSelf && isAdmin
+                                  ? 'No puedes quitarte el rol de Admin a ti mismo'
+                                  : ''
+                              }
                             >
-                              Hacer Admin
+                              {isAdmin ? 'Admin ✓' : 'Hacer Admin'}
                             </Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   {users.length === 0 && (
                     <tr>
                       <td

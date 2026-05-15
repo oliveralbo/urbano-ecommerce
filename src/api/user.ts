@@ -43,4 +43,23 @@ export const userApi = {
 
     return result.data;
   },
+
+  unassignRole: async (token: string, data: AssignRoleDto): Promise<User> => {
+    const response = await fetch(`${API_URL}/role/unassign`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result: ApiResponse<User> = await response.json();
+
+    if (!response.ok || !result.isSuccess) {
+      throw new Error(result.message || 'Error al desasignar rol');
+    }
+
+    return result.data;
+  },
 };

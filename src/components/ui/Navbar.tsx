@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
                   Admin
                 </Link>
               )}
-              {(isMerchant || isAdmin) && (
+              {isMerchant && (
                 <Link
                   to="/ventas"
                   className="hover:text-blue-600 transition-colors"
