@@ -1,75 +1,62 @@
-# React + TypeScript + Vite
+# Urbano E-commerce - Frontend (Challenge Sr Fullstack)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 **Acceso a Producción:** [https://urbano-ecommerce.vercel.app/login](https://urbano-ecommerce.vercel.app/login)
 
-Currently, two official plugins are available:
+Este repositorio contiene el frontend de la solución para el desafío **Sr Fullstack (Microservicios)**. La aplicación ha sido desarrollada con **React** y **Vite**, diseñada para interactuar con un backend orientado a eventos (**Event-Driven**) y proporcionar una experiencia de usuario fluida y reactiva.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 1. Propósito del Proyecto
 
-## React Compiler
+El objetivo de esta interfaz es permitir la gestión integral del catálogo e inventario, reflejando en tiempo real (o mediante actualizaciones de estado) los flujos asincrónicos definidos en el backend. 
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Características principales:
+- **Autenticación y Roles:** Manejo de sesiones y permisos (Admin/Merchant/User).
+- **Gestión de Productos:** Productos con estados de validación.
+- **Flujo Reactivo:** Visualización de productos activados automáticamente tras pasar validaciones en el backend.
+- **Panel de Ventas:** Interfaz optimizada para la publicación y gestión de artículos.
 
-Note: This will impact Vite dev & build performances.
+## 2. Decisiones Técnicas
 
-## Expanding the ESLint configuration
+- **React 19 + TypeScript:** Uso de las últimas funcionalidades de React para un tipado fuerte y un desarrollo eficiente.
+- **Tailwind CSS 4:** Estilizado moderno y rápido utilizando la última versión del framework.
+- **Vite:** Herramienta de construcción ultrarrápida para una experiencia de desarrollo superior.
+- **Context API:** Gestión de estado global para la autenticación y el flujo de usuario.
+- **Arquitectura de Componentes:** Separación clara entre componentes de UI reutilizables, formularios de lógica de negocio y secciones de página.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 3. Guía de Inicio Rápido
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Requisitos
+- Node.js v18 o superior
+- npm o yarn
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Instalación
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  **Clonar el repositorio**
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
+3.  **Configurar Variables de Envono:**
+    Crea un archivo `.env` en la raíz del proyecto:
+    ```env
+    VITE_API_URL=http://localhost:3000
+    ```
+4.  **Iniciar la Aplicación:**
+    ```bash
+    npm run dev
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 4. Estructura del Proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `src/api`: Servicios de comunicación con el backend (Axios/Fetch).
+- `src/components`:
+  - `ui`: Componentes atómicos y reutilizables.
+  - `auth`: Formularios y lógica de acceso.
+  - `product`: Lógica de visualización y detalle de productos.
+- `src/context`: Proveedores de estado global.
+- `src/hooks`: Hooks personalizados para lógica compartida.
+- `src/pages`: Componentes de página de nivel superior.
+- `src/routes`: Configuración de rutas y navegación protegida.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+🔗 **Repositorio Backend:** [https://github.com/oliveralbo/urbano_back_challenge](https://github.com/oliveralbo/urbano_back_challenge)
