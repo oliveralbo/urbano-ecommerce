@@ -134,20 +134,6 @@ export const inventoryApi = {
     return result.data;
   },
 
-  activateProduct: async (token: string, id: number): Promise<Product> => {
-    const response = await fetch(`${API_URL}/product/${id}/activate`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const result: ApiResponse<Product> = await response.json();
-    if (!response.ok || !result.isSuccess)
-      throw new Error(result.message || 'Error al activar producto');
-    return result.data;
-  },
-
   getProducts: async (token: string): Promise<Product[]> => {
     const response = await fetch(`${API_URL}/product`, {
       headers: {

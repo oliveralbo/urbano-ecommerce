@@ -26,7 +26,8 @@ export const ProductGrid: React.FC = () => {
       try {
         setIsLoading(true);
         const data = await inventoryApi.getProducts(token);
-        setProducts(data);
+        const activeProducts = data.filter((p) => p.isActive);
+        setProducts(activeProducts);
         setError(null);
       } catch (err) {
         console.error('Error fetching products:', err);

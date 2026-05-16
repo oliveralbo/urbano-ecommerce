@@ -109,23 +109,9 @@ export const SalesPage: React.FC = () => {
             },
       };
 
-      const updatedProduct = await inventoryApi.updateDetails(
-        token,
-        createdProduct.id,
-        payload,
-      );
+      await inventoryApi.updateDetails(token, createdProduct.id, payload);
 
-      if (updatedProduct.isActive) {
-        setSuccess(true);
-      } else {
-        const activated = await inventoryApi.activateProduct(
-          token,
-          createdProduct.id,
-        );
-        if (activated.isActive) {
-          setSuccess(true);
-        }
-      }
+      setSuccess(true);
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : 'Ocurrió un error inesperado',
