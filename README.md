@@ -2,6 +2,57 @@
 
 🚀 **Acceso a Producción:** [https://urbano-ecommerce.vercel.app/login](https://urbano-ecommerce.vercel.app/login)
 
+Super usuario productivo (seed original):
+ - user: admin@admin.com
+ - pass: 12345678
+
+# 🧪 Flujo sugerido para testeo de eventos
+
+## 1. Registro de usuario
+- Registrarse con un usuario nuevo  
+- 📩 Se envía mail de bienvenida  
+
+---
+
+## 2. Acceso como comprador
+- Ingresar con el usuario recién creado  
+- El usuario puede operar como **comprador**
+
+---
+
+## 3. Asignación de rol (Super User)
+- Ingresar con el **super user**
+- Asignar rol de **vendedor** al usuario creado  
+- 📩 Se envía evento: *mail de cambio de roles*
+
+---
+
+## 4. Uso como vendedor
+- Ingresar nuevamente con el usuario creado  
+- Ir a la pestaña de **vendedor**
+
+---
+
+## 5. Creación de producto
+- Crear un nuevo producto  
+- ⚙️ Se ejecuta el evento de **activación de producto** (si los datos son correctos)
+
+---
+
+## 6. Visualización del producto
+- Ver el producto activo en el Home  
+
+---
+
+## 7. Revocación de rol (Super User)
+- Ingresar nuevamente con el **super user**
+- Quitar rol de **vendedor** al usuario creado  
+
+### ⚠️ Eventos disparados:
+- 📩 Mail de cambio de roles al usuario  
+- 🗑️ Eliminación de todos los productos creados por el usuario  
+
+
 Este repositorio contiene el frontend de la solución para el desafío **Sr Fullstack (Microservicios)**. La aplicación ha sido desarrollada con **React** y **Vite**, diseñada para interactuar con un backend orientado a eventos (**Event-Driven**) y proporcionar una experiencia de usuario fluida y reactiva.
 
 ## 1. Propósito del Proyecto
